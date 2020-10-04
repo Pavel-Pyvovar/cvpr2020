@@ -81,30 +81,6 @@ def process_images(train_img_path, paths):
     return descriptor_results
 
 
-# zvv photos
-results_item = []
-for size in [640, 1024, 2048]:
-    train = f'/home/vzalevskyi/git/cvpr2020/photos_resized_zvv/item_pics/photos_{size}/P00930-164836_1.jpg'
-    item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/photos_resized_zvv/item_pics/photos_{size}').iterdir())
-
-    res = process_images(train, item_pics)
-    results_item.append(pd.DataFrame(res).T)
-
-results_no_item = []
-for size in [640, 1024, 2048]:
-    train = f'/home/vzalevskyi/git/cvpr2020/photos_resized_zvv/item_pics/photos_{size}/P00930-164836_1.jpg'
-    item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/photos_resized_zvv/non_item_pics/photos_{size}').iterdir())
-
-    res = process_images(train, item_pics)
-    results_no_item.append(pd.DataFrame(res).T)
-
-writer = pd.ExcelWriter('zvv_pics_results.xlsx', engine='xlsxwriter')
-for idx, size in enumerate([640, 1024, 2048]):
-    results_item[idx].to_excel(writer, sheet_name=f'item_{size}')
-    results_no_item[idx].to_excel(writer, sheet_name=f'no_item_{size}')
-writer.save()
-
-
 # vvr photos
 results_item = []
 for size in [640, 1024, 2048]:
