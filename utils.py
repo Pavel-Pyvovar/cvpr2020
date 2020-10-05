@@ -32,6 +32,9 @@ def resize_single(in_path: str, out_path: str, size: int):
         raise ValueError(f"{out_path} not exists")
     out = os.path.join(out_path, in_path.split(os.sep)[-1])
     img = cv2.imread(in_path, cv2.IMREAD_COLOR)
+    if img is None:
+        print(f"IMG PROBLEM {out}")
+        return None
     size = calc_size(img.shape[:2], size)
     img = cv2.resize(img, size, interpolation=cv2.INTER_AREA)
     cv2.imwrite(out, img)

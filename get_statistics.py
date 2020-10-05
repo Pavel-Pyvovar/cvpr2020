@@ -80,8 +80,26 @@ def process_images(train_img_path, paths):
             time.time() - start_time)/len(paths)
     return descriptor_results
 
-train = '/home/vzalevskyi/git/cvpr2020/photos_resized_pavlo/photos_640/20200918_101345.jpg'
-item_pics = list(Path().cwd().joinpath('photos_resized_pavlo/photos_640/').iterdir())
 
-res = process_images(train, item_pics)
-pd.DataFrame(res).T
+# vvr photos
+results_item = []
+for size in [640, 1024, 2048]:
+    train = f'/home/vzalevskyi/git/cvpr2020/photos_resized_pavlo/photos_{size}/item_pics/20200918_161314.jpg'
+    item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/photos_resized_pavlo/photos_{size}/item_pics').iterdir())
+
+    res = process_images(train, item_pics)
+    results_item.append(pd.DataFrame(res).T)
+
+results_no_item = []
+for size in [640, 1024, 2048]:
+    train = f'/home/vzalevskyi/git/cvpr2020/photos_resized_pavlo/photos_{size}/item_pics/20200918_161314.jpg'
+    item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/photos_resized_pavlo/photos_{size}/non_item_pics').iterdir())
+
+    res = process_images(train, item_pics)
+    results_no_item.append(pd.DataFrame(res).T)
+
+writer = pd.ExcelWriter('ppe_pics_results.xlsx', engine='xlsxwriter')
+for idx, size in enumerate([640, 1024, 2048]):
+    results_item[idx].to_excel(writer, sheet_name=f'item_{size}')
+    results_no_item[idx].to_excel(writer, sheet_name=f'no_item_{size}')
+writer.save()
