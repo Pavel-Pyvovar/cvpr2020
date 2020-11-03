@@ -14,7 +14,7 @@ descriptors_to_test = {'ORB(nfeatures=500, scoreType=ORB_HARRIS_SCORE)': cv.ORB_
                        'BRIEF()': cv.xfeatures2d.BriefDescriptorExtractor_create()}
 
 
-def test_image(trained_descriptors,  descriptor, test_img_path):
+def test_image(trained_descriptors,  descriptor, test_img_path, from_frame=False):
     """Processes test image given a descriptor and descriptor's train features
        and counts some statistics
     Args:
@@ -25,7 +25,11 @@ def test_image(trained_descriptors,  descriptor, test_img_path):
     Returns:
         (float, float): mateched_kp_proportion and avg_kp_difference respectively
     """
-    test_img = cv.imread(str(test_img_path), cv.IMREAD_GRAYSCALE)
+    if from_frame:
+        test_img = test_img_path
+    else:
+        test_img = cv.imread(str(test_img_path), cv.IMREAD_GRAYSCALE)
+    
     if not isinstance(descriptor, cv.xfeatures2d_BriefDescriptorExtractor):
         test_kp, test_descriptors = descriptor.detectAndCompute(test_img, None)
     else:
@@ -85,60 +89,63 @@ def process_images(train_img_path, paths, target):
 size = 2048
 
 
+# if __name__ == '__main__':
+#     name = 'ppe'
+#     train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/photos_{size}/item_pics/20200918_161314.jpg'
+#     item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/photos_{size}/item_pics').iterdir())
+#     ppe_items = process_images(train, item_pics, 'ppe_item')
 
-name = 'ppe'
-train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/photos_{size}/item_pics/20200918_161314.jpg'
-item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/photos_{size}/item_pics').iterdir())
-ppe_items = process_images(train, item_pics, 'ppe_item')
-
-train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/photos_{size}/item_pics/20200918_161314.jpg'
-item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/photos_{size}/non_item_pics').iterdir())
-ppe_no_items = process_images(train, item_pics, 'ppe_non_item')
-
-
-
-
-
-
-name = 'zvv'
-train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}/P00930-164836_1.jpg'
-item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}').iterdir())
-zvv_items = process_images(train, item_pics, 'zvv_item')
-
-train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}/P00930-164836_1.jpg'
-item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/non_item_pics/photos_{size}').iterdir())
-zvv_no_items = process_images(train, item_pics, 'zvv_non_item')
+#     train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/photos_{size}/item_pics/20200918_161314.jpg'
+#     item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/photos_{size}/non_item_pics').iterdir())
+#     ppe_no_items = process_images(train, item_pics, 'ppe_non_item')
 
 
 
 
 
 
-name = 'rvv'
-train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}/IMG_20201003_153648.jpg'
-item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}').iterdir())
-rvv_items = process_images(train, item_pics, 'rvv_item')
+#     name = 'zvv'
+#     train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}/P00930-164836_1.jpg'
+#     item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}').iterdir())
+#     zvv_items = process_images(train, item_pics, 'zvv_item')
 
-train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}/IMG_20201003_153648.jpg'
-item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/non_item_pics/photos_{size}').iterdir())
-rvv_no_items = process_images(train, item_pics, 'rvv_non_item')
-
-
+#     train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}/P00930-164836_1.jpg'
+#     item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/non_item_pics/photos_{size}').iterdir())
+#     zvv_no_items = process_images(train, item_pics, 'zvv_non_item')
 
 
 
 
-final_result_df = {'img_names':[], 'descriptor_values':[], 'target':[],
-                   'descriptor_names':[]}
 
-datasets = [ppe_items, ppe_no_items, zvv_items, zvv_no_items, rvv_items, rvv_no_items]
-for dataset in datasets:
-    for descr_name in dataset.index.values:
-        for idx, descr_val in enumerate(dataset.loc[descr_name]['top_descriptors']):
-            final_result_df['descriptor_values'].append(descr_val)
-            final_result_df['img_names'].append(str(dataset.loc[descr_name]['img_names'][idx]).split('/')[-1])
-            final_result_df['target'].append(dataset.loc[descr_name]['target'])
-            final_result_df['descriptor_names'].append(descr_name)
-            
-final_result_df = pd.DataFrame(final_result_df)
-final_result_df.to_pickle('../results/image_descriptions.pkl')
+
+#     name = 'rvv'
+#     train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}/IMG_20201003_153648.jpg'
+#     item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}').iterdir())
+#     rvv_items = process_images(train, item_pics, 'rvv_item')
+
+#     train = f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/item_pics/photos_{size}/IMG_20201003_153648.jpg'
+#     item_pics = list(Path().cwd().joinpath(f'/home/vzalevskyi/git/cvpr2020/data/{name}/resized/non_item_pics/photos_{size}').iterdir())
+#     rvv_no_items = process_images(train, item_pics, 'rvv_non_item')
+
+
+
+
+
+
+#     final_result_df = {'img_names':[], 'descriptor_values':[], 'target':[],
+#                     'descriptor_names':[]}
+
+#     datasets = [ppe_items, ppe_no_items, zvv_items, zvv_no_items, rvv_items, rvv_no_items]
+#     for dataset in datasets:
+#         for descr_name in dataset.index.values:
+#             for idx, descr_val in enumerate(dataset.loc[descr_name]['top_descriptors']):
+#                 final_result_df['descriptor_values'].append(descr_val)
+#                 final_result_df['img_names'].append(str(dataset.loc[descr_name]['img_names'][idx]).split('/')[-1])
+#                 final_result_df['target'].append(dataset.loc[descr_name]['target'])
+#                 final_result_df['descriptor_names'].append(descr_name)
+                
+#     final_result_df = pd.DataFrame(final_result_df)
+#     final_result_df.to_pickle('../results/image_descriptions.pkl')
+
+# import pandas as pd
+# final_result_df = pd.read_pickle('../results/image_descriptions.pkl')
