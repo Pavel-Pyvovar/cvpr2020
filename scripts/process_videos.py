@@ -159,7 +159,7 @@ for descriptor_name, descriptor in tqdm(descriptors_to_test.items()):
                     ], enforce_sorted=False).cuda()
                     out = model.predict(out).detach().cpu().numpy().argmax(1).ravel()
 
-            cv.putText(frame, f'class: {classes[out[0]]}', (10, 10), cv.FONT_HERSHEY_SIMPLEX, 5, (255, 0, 0), 2)
+            cv.putText(frame, f'class: {classes[out[0]]}', (10, 200), cv.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 2)
 
             writer.write(frame)
         writer.release()
