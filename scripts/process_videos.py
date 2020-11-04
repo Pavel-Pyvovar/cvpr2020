@@ -10,7 +10,7 @@ from tqdm.std import tqdm
 
 from get_descriptors_for_images import descriptors_to_test, test_image
 
-descriptors_to_test["SVC"] = None
+descriptors_to_test.update({"SVC": None})
 
 size = 2048
 train_ppe = f'../data/ppe/resized/photos_{size}/item_pics/20200918_161314.jpg'
@@ -145,7 +145,7 @@ for descriptor_name, descriptor in tqdm(descriptors_to_test.items()):
 
             if descriptor is None:
                 img = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-                out = preprocess_image(img)
+                out = preprocess_image(img).cuda()
                 out = model(out).detach().cpu().squeeze().numpy()
                 out = transformer.transform(out.reshape(1, -1))
                 out = svc.predict(out).ravel()
