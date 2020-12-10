@@ -104,7 +104,7 @@ def main():
             changed_frame = render_object(
                 loaded_reference_object, frame, homography, changed_frame, references[ref_idx][0])
 
-        cv2.putText(changed_frame, f'FPS: {2 * (10**6/(datetime.datetime.now() - start_date_time).microseconds)}',
+        cv2.putText(changed_frame, f'FPS: {10**6/(datetime.datetime.now() - start_date_time).microseconds}',
                     bottomLeftCornerOfText,
                     font,
                     fontScale,
